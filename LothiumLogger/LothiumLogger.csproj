@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Title>A Basic Logger Library</Title>
+    <Company>LothiumSolutions</Company>
+    <Description>An Easy and Simple Logger Library For Small Projects</Description>
+    <Copyright>Copyright LothiumSolutions © 2023 - Provided under the GNU General Public License v3.0</Copyright>
+    <PackageProjectUrl>https://github.com/AndreaSantinato/LothiumLogger</PackageProjectUrl>
+    <PackageIcon>LothiumLogger.png</PackageIcon>
+    <RepositoryUrl>https://github.com/AndreaSantinato/LothiumLogger</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>Log; Logger; LothiumSolutions; Lothium; Solutions</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Authors>LothiumSolutions</Authors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Configurations\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Core\LoggerCore.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="LICENSE.txt">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="LothiumLogger.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+</Project>
