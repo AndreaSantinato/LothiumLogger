@@ -109,3 +109,4 @@ LothiumLogger/obj/Release/net6.0/LothiumLogger.GlobalUsings.g.cs
 LothiumLogger/obj/Release/net6.0/LothiumLogger.pdb
 LothiumLogger/obj/Release/net6.0/ref/LothiumLogger.dll
 LothiumLogger/obj/Release/net6.0/refint/LothiumLogger.dll
+*.vsidx
