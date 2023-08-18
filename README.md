@@ -34,7 +34,8 @@ logger.Error("Err Log Message");
 logger.Fatal("Fatal Log Message");
 ```
 
-The library gave the user the ability to seraize an object inside the log message to keep track of real time changes:
+The library gave the user the ability to seraize an object inside the log message or a one or more property to keep track of real time changes.
+For serialize an object or a Property Name is required the Type Name likes this example:
 ```csharp
 Person person = new Person() 
 {
@@ -43,7 +44,9 @@ Person person = new Person()
     Age = 25
 };
 
-logger.Information("Created New Person: {@Person}", person);
+logger.Information("Created Person: {@Person}", person);
+logger.Information("Person Name: {@Name} {@Surname}", person);
+logger.Information("Person Age: {@Age}", person);
 ```
 For this methods to work the parameter's name must be equal to the object class's type, in this case the class name is 'Person'
 
@@ -52,13 +55,13 @@ If an error occured while executing the code and need to keep track of exception
 try 
 {
     // Some Code Here...
+    throw new Exception("Test exception example!!");
 }
 catch (Exception exception)
 {
     // Log the exception
     logger.Error(exception);
 }
-Exception exception = new Exception("This is a test exception");
 ```
 
 ### Getting started

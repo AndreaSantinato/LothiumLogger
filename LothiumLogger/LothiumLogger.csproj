@@ -21,6 +21,8 @@
     <FileVersion>1.1.0.0</FileVersion>
     <Authors>LothiumSolutions</Authors>
     <Version>1.1.0</Version>
+    <PackageReleaseNotes>- Added New Object Serialization Options.
+- Changes Logger Class Methods For More Options.</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
