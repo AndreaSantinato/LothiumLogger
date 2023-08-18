@@ -52,16 +52,18 @@ namespace LothiumLogger.Core
         /// <summary>
         /// Wreite a new log file
         /// </summary>
-        /// <param name="content"></param>
-        /// <param name="path"></param>
-        /// <param name="format"></param>
+        /// <param name="logEvent">Contains the log event occured</param>
+        /// <param name="fileName">Contains the name for the log file</param>
+        /// <param name="filePath">Contains the file path for the log file</param>
         internal static void WriteToFile(LogEventObject logEvent, string fileName, string filePath)
 		{
+            // Get all the information needed to write the content inside the output path file
             string outputPath = FileLogging.InitializeWriting(filePath, fileName);
             string prevContent = FileLogging.ReadFromFile(outputPath, LogFormat.Easy);
             string newContent = FormatManager.FormatLogMessage(logEvent, LogDateFormat.Standard);
             string content = FormatManager.FormatLogFile(prevContent, newContent);
 
+            // Write the content inside the specific output path of the file
             File.WriteAllText(outputPath, content);
         }
 
@@ -74,15 +76,13 @@ namespace LothiumLogger.Core
         internal static string InitializeWriting(string filePath, string fileName)
         {
             // Inizialize the log path
-            if (String.IsNullOrEmpty (filePath)) 
+            filePath = !String.IsNullOrEmpty(filePath) ? Path.Combine(filePath) : Path.Combine(Directory.GetCurrentDirectory(), "Logs");
+            
+            // Check if the directory exists, if not will create it
+            if (!Directory.Exists(filePath))
             {
-                filePath = Path.Combine(Directory.GetCurrentDirectory(), "Logs");
+                Directory.CreateDirectory(filePath);
             }
-            else
-            {
-                filePath = Path.Combine(filePath);
-            }
-            if (!Directory.Exists(filePath)) Directory.CreateDirectory(filePath);
 
             // Inizialize the log file
             if (String.IsNullOrEmpty(fileName))

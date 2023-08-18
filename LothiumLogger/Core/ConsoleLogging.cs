@@ -10,12 +10,11 @@ namespace LothiumLogger.Core
     /// </summary>
     internal sealed class ConsoleLogging
 	{
-		/// <summary>
-		/// Write a new log inside the Console
-		/// </summary>
-		/// <param name="message"></param>
-		/// <param name="level"></param>
-		internal static void WriteToConsole(LogEventObject logEvent)
+        /// <summary>
+        /// Write a new log inside the Console
+        /// </summary>
+        /// <param name="logEvent">Contains the log event occured</param>
+        internal static void WriteToConsole(LogEventObject logEvent)
 		{
 			if (logEvent != null && !String.IsNullOrEmpty(logEvent.EventMessage))
 			{
@@ -23,12 +22,11 @@ namespace LothiumLogger.Core
 			}
 		}
 
-		/// <summary>
-		/// Write a list of logs inside the Console
-		/// </summary>
-		/// <param name="messages"></param>
-		/// <param name="level"></param>
-		internal static void WriteToConsole(List<LogEventObject> logEvents)
+        /// <summary>
+        /// Write a list of logs inside the Console
+        /// </summary>
+        /// <param name="logEvent">Contains the log event occured</param>
+        internal static void WriteToConsole(List<LogEventObject> logEvents)
 		{
 			if (logEvents != null && logEvents.Count() > 0)
 			{

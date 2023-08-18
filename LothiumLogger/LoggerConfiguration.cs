@@ -46,7 +46,6 @@ namespace LothiumLogger
 
         #endregion
 
-
         /// <summary>
         /// Add a new write to console settings to the current configuration
         /// </summary>
