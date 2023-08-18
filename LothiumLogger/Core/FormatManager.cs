@@ -187,7 +187,30 @@ namespace LothiumLogger.Core
         /// <returns></returns>
         internal static string FormatLogMessageFromObject(object obj, LogEventObject logEvent, LogDateFormat dateFormat)
         {
-            logEvent.EventMessage = new Regex(@"\{([^\}]+)\}").Replace(logEvent.EventMessage, JsonSerializer.Serialize(obj));
+            var searchValue = String.Concat("{@", obj.GetType().Name, "}");
+            if (logEvent.EventMessage.Contains(searchValue))
+            {
+                // Serialize all the object
+                logEvent.EventMessage = logEvent.EventMessage.Replace(searchValue, JsonSerializer.Serialize(obj));
+                //logEvent.EventMessage = new Regex(@"\{([^\}]+)\}").Replace(logEvent.EventMessage, JsonSerializer.Serialize(obj));
+            }
+            else
+            {
+                // Serialize a specific property
+                var matches = new Regex(@"\{([^\}]+)\}").Matches(logEvent.EventMessage);
+                foreach ( var match in matches)
+                {
+                    var pName = match.ToString()
+                        .Replace("{", String.Empty)
+                        .Replace("}", String.Empty)
+                        .Replace("@", String.Empty);
+
+                    var pValue = obj.GetType().GetProperty(pName).GetValue(obj, null);
+
+                    logEvent.EventMessage = logEvent.EventMessage.Replace(match.ToString(), pValue.ToString());
+                }
+
+            }
             return FormatManager.FormatLogMessage(logEvent, dateFormat);
         }
 

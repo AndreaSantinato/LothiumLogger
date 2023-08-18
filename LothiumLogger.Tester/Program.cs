@@ -26,11 +26,12 @@ Person person = new Person()
     Surname = "Santinato",
     Age = 25
 };
-logger.Write("Created Person: {@person}", person);
+logger.Information("Created Person: {@Person}", person);
+logger.Information("Person Name: {@Name} {@Surname}", person);
+logger.Information("Person Age: {@Age}", person);
 
 // Write an advanced log from an exception
-Exception exception = new Exception("This is a test exception");
-logger.Error("Test Exception", exception);
-logger.Fatal("Fatal Test Exception", exception);
+logger.Error("Test Exception", new Exception("This is a first test exception"));
+logger.Fatal("Fatal Test Exception", new Exception("This is a second test exception"));
 
 Console.WriteLine("{--- Ending Point ---}");
