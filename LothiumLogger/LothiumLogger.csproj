@@ -17,18 +17,20 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-    <AssemblyVersion>1.1.0.0</AssemblyVersion>
-    <FileVersion>1.1.0.0</FileVersion>
+    <AssemblyVersion>1.2.0.0</AssemblyVersion>
+    <FileVersion>1.2.0.0</FileVersion>
     <Authors>LothiumSolutions</Authors>
-    <Version>1.1.0</Version>
-    <PackageReleaseNotes>- Added New Object Serialization Options.
-- Changes Logger Class Methods For More Options.</PackageReleaseNotes>
+    <Version>1.2.0</Version>
+    <PackageReleaseNotes>Completely rewrite the library's core logic and methods for better performance and code rewrites.</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Configurations\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Remove="Core\ConsoleLogging.cs" />
+    <Compile Remove="Core\CoreLogging.cs" />
+    <Compile Remove="Core\FileLogging.cs" />
     <Compile Remove="Core\LoggerCore.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -54,5 +56,8 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Core\" />
   </ItemGroup>
 </Project>

@@ -5,7 +5,11 @@ VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LothiumLogger", "LothiumLogger\LothiumLogger.csproj", "{7A16C2B3-9879-4C2E-B0FF-F43932E9E697}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LothiumLogger.Tester", "LothiumLogger.Tester\LothiumLogger.Tester.csproj", "{99D01844-CA74-404B-9357-4B6ABED15093}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LothiumLogger.Tester", "LothiumLogger.Tester\LothiumLogger.Tester.csproj", "{99D01844-CA74-404B-9357-4B6ABED15093}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F3E09B72-8463-4B13-81B3-3DD6BA6FB3C8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{3CDB3AD2-5F4B-42AD-821A-C544AA838186}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,6 +28,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7A16C2B3-9879-4C2E-B0FF-F43932E9E697} = {F3E09B72-8463-4B13-81B3-3DD6BA6FB3C8}
+		{99D01844-CA74-404B-9357-4B6ABED15093} = {3CDB3AD2-5F4B-42AD-821A-C544AA838186}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F6EB87E8-3200-4EB8-B8EC-E92F3BD52152}

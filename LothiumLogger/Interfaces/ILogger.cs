@@ -14,41 +14,41 @@ namespace LothiumLogger.Interfaces
         /// </summary>
         /// <param name="logEvent">Contains the log event occured</param>
         /// <param name="obj">Contains the optional object to be serialized into the log</param>
-        public void Write(LogEventObject logEvent, object? obj = null);
+        public void Write(LogEvent logEvent, object? obj = null);
 
         /// <summary>
         /// Write a debug log
         /// </summary>
         /// <param name="logEvent">Contains the log event occured</param>
         /// <param name="obj">Contains the optional object to be serialized into the log</param>
-        public void Debug(LogEventObject logEvent, object? obj = null);
+        public void Debug(LogEvent logEvent, object? obj = null);
 
         /// <summary>
         /// Write a information log
         /// </summary>
         /// <param name="logEvent">Contains the log event occured</param>
         /// <param name="obj">Contains the optional object to be serialized into the log</param>
-        public void Information(LogEventObject logEvent, object? obj = null);
+        public void Information(LogEvent logEvent, object? obj = null);
 
         /// <summary>
         /// Write a warning log
         /// </summary>
         /// <param name="logEvent">Contains the log event occured</param>
         /// <param name="obj">Contains the optional object to be serialized into the log</param>
-        public void Warning(LogEventObject logEvent, object? obj = null);
+        public void Warning(LogEvent logEvent, object? obj = null);
 
         /// <summary>
         /// Write a error log
         /// </summary>
         /// <param name="logEvent">Contains the log event occured</param>
         /// <param name="obj">Contains the optional object to be serialized into the log</param>
-        public void Error(LogEventObject logEvent, object? obj = null);
+        public void Error(LogEvent logEvent, object? obj = null);
 
         /// <summary>
         /// Write a fatal log
         /// </summary>
         /// <param name="logEvent">Contains the log event occured</param>
         /// <param name="obj">Contains the optional object to be serialized into the log</param>
-        public void Fatal(LogEventObject logEvent, object? obj = null);
+        public void Fatal(LogEvent logEvent, object? obj = null);
     }
 }

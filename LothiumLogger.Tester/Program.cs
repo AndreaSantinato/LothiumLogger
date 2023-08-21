@@ -1,14 +1,15 @@
-﻿using LothiumLogger;
+﻿// LothiumLogger Class
+using LothiumLogger;
 using LothiumLogger.Enumerations;
 using LothiumLogger.Tester.TestModels;
 
 Console.WriteLine("{--- Starting Point ---}");
 
-// Create a new logger istance
+// Create a new logger instance
 var logger = new LoggerConfiguration()
-    .WriteToConsole()
-    .WriteToFile(fileName: "Log", minimumLevel: LogLevel.Normal)
-    .WriteToFile(fileName: "Err_Log", restrictedToLevel: LogLevel.Err)
+    .AddConsoleSink()
+    .AddFileSink(name: "Log", minimumLogLevel: LogLevel.Normal)
+    .AddFileSink(name: "Err_Log", restrictedToLogLevel: LogLevel.Err)
     .Build();
 
 // Write a sample log messages
@@ -27,8 +28,12 @@ Person person = new Person()
     Age = 25
 };
 logger.Information("Created Person: {@Person}", person);
-logger.Information("Person Name: {@Name} {@Surname}", person);
-logger.Information("Person Age: {@Age}", person);
+logger.Information("Person Name: {@Person.Name} {@Person.Surname}", person);
+logger.Information("Person Age: {@Person.Age}", person);
+
+// Serialize an independant variable
+string example = "Test Variable";
+logger.Debug("Variable Value: {@example}", example);
 
 // Write an advanced log from an exception
 logger.Error("Test Exception", new Exception("This is a first test exception"));

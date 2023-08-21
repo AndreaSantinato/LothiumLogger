@@ -2,17 +2,17 @@
 
 LothiumLogger is a simple easy Logger Library for .Net applications written entirely in C# for fun, it offers a basic and easy syntax and give flexybility to the final user.
 
-For create a new Logger istance you will need to use the LoggerConfiguration class:
+For create a new Logger instance you will need to use the LoggerConfiguration class:
 
 ```csharp
 var logger = new LoggerConfiguration()
-    .WriteToConsole()
-    .WriteToFile(fileName: "Log", minimumLevel: LogLevel.Normal)
-    .WriteToFile(fileName: "Err_Log", restrictedToLevel: LogLevel.Err)
+    .AddConsoleSink()
+    .AddFileSink(name: "Log", minimumLogLevel: LogLevel.Normal)
+    .AddFileSink(name: "Err_Log", restrictedToLogLevel: LogLevel.Err)
     .Build();
 ```
 
-After the creation of the new logger istance, there is 6 different methods to write a new log message:
+After the creation of the new logger instance, there is 6 different methods to write a new log message:
 
 ```csharp
 // Defualt base message
@@ -36,6 +36,7 @@ logger.Fatal("Fatal Log Message");
 
 The library gave the user the ability to seraize an object inside the log message or a one or more property to keep track of real time changes.
 For serialize an object or a Property Name is required the Type Name likes this example:
+
 ```csharp
 Person person = new Person() 
 {
@@ -45,10 +46,18 @@ Person person = new Person()
 };
 
 logger.Information("Created Person: {@Person}", person);
-logger.Information("Person Name: {@Name} {@Surname}", person);
-logger.Information("Person Age: {@Age}", person);
+logger.Information("Person Name: {@Person.Name} {@Person.Surname}", person);
+logger.Information("Person Age: {@Person.Age}", person);
 ```
+
 For this methods to work the parameter's name must be equal to the object class's type, in this case the class name is 'Person'
+When you need to serialize one or more object property, the library need a combination of the object's type name and the property name
+In the end the library can serialize an external independent variable passed to the methods:
+
+```csharp
+string example = "Test Variable";
+logger.Debug("Variable Value: {@example}", example);
+```
 
 If an error occured while executing the code and need to keep track of exception, the library offer the ability to serialize an exception object directly to the log message:
 ```csharp

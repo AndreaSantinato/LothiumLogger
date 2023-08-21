@@ -113,3 +113,4 @@ LothiumLogger/obj/Release/net6.0/refint/LothiumLogger.dll
 *.nuspec
 *.nupkg
 *.ltlog
+*.BuildWithSkipAnalyzers
