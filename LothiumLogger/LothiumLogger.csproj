@@ -25,13 +25,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Configurations\" />
+    <Compile Remove="Core\**" />
+    <EmbeddedResource Remove="Core\**" />
+    <None Remove="Core\**" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Remove="Core\ConsoleLogging.cs" />
-    <Compile Remove="Core\CoreLogging.cs" />
-    <Compile Remove="Core\FileLogging.cs" />
-    <Compile Remove="Core\LoggerCore.cs" />
+    <None Remove="Configurations\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\LICENSE.txt">
@@ -56,8 +56,5 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Core\" />
   </ItemGroup>
 </Project>
