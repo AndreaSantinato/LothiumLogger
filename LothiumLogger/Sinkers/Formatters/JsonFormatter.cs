@@ -1,15 +1,13 @@
 ﻿// System Class
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 // Custom Class
 using LothiumLogger.Enumerations;
+using LothiumLogger.Interfaces;
 
-namespace LothiumLogger.Formatters
+namespace LothiumLogger.Sinkers.Formatters
 {
     /// <summary>
     /// Json Formatter Class For The Log Event With Object Serialization
@@ -22,19 +20,19 @@ namespace LothiumLogger.Formatters
         /// <param name="obj">Contains the object to serialize into a json string</param>
         /// <param name="logEvent">Contains the log event occured</param>
         /// <returns>A Json Formatted String</returns>
-        public static LogEvent FormatObject(object obj, LogEvent logEvent)
+        public static ILogEvent FormatObject(object obj, ILogEvent logEvent)
         {
-            string result = String.Empty;
+            string result = string.Empty;
 
             // Verify if the message of the current log event is not valorized
             var logMessage = logEvent.Message;
-            if (String.IsNullOrEmpty(logMessage))
+            if (string.IsNullOrEmpty(logMessage))
             {
                 return logEvent;
             }
 
             // Check the content of the log event message for serialize the object
-            var searchValue = String.Concat("{@", obj.GetType().Name, "}");
+            var searchValue = string.Concat("{@", obj.GetType().Name, "}");
             if (logMessage.Contains(searchValue))
             {
                 // Serialize all the object
@@ -47,14 +45,14 @@ namespace LothiumLogger.Formatters
                 foreach (var match in matches)
                 {
                     var matchValue = match.ToString()
-                        .Replace("{", String.Empty)
-                        .Replace("}", String.Empty)
-                        .Replace("@", String.Empty);
+                        .Replace("{", string.Empty)
+                        .Replace("}", string.Empty)
+                        .Replace("@", string.Empty);
 
                     // Verify if the variable contains the object type name or if it's only an external variabile
                     if (matchValue.Contains(obj.GetType().Name))
                     {
-                        var pName = matchValue.Replace(String.Concat(obj.GetType().Name, "."), String.Empty);
+                        var pName = matchValue.Replace(string.Concat(obj.GetType().Name, "."), string.Empty);
                         var pValue = obj.GetType().GetProperty(pName).GetValue(obj, null).ToString();
                         logMessage = logMessage.Replace(match.ToString(), pValue);
                     }
@@ -78,22 +76,22 @@ namespace LothiumLogger.Formatters
         /// <param name="ex">Contains the exception to serialize into a json string</param>
         /// <param name="logEvent">Contains the log event occured</param>
         /// <returns>A Json Formatted String</returns>
-        public static LogEvent FormatException(Exception ex, LogEvent logEvent)
+        public static ILogEvent FormatException(Exception ex, ILogEvent logEvent)
         {
             string result = JsonSerializer.Serialize(ex);
-            if (String.IsNullOrEmpty(logEvent.Message))
+            if (string.IsNullOrEmpty(logEvent.Message))
             {
                 switch (logEvent.Level)
                 {
-                    case LogLevel.Err:
+                    case LogLevelEnum.Err:
                         logEvent.Message = "Exception Error: ";
                         break;
-                    case LogLevel.Fatal:
+                    case LogLevelEnum.Fatal:
                         logEvent.Message = "Fatal Exception Error: ";
                         break;
                 }
             }
-            logEvent.Message = String.Format("{0}: {1}", logEvent.Message, result);
+            logEvent.Message = string.Format("{0}: {1}", logEvent.Message, result);
             return logEvent;
         }
     }

@@ -1,10 +1,7 @@
 ﻿// System Class
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-// Custom Class
+// Core Class
+using LothiumLogger.Interfaces;
 using LothiumLogger.Enumerations;
 
 namespace LothiumLogger
@@ -12,7 +9,7 @@ namespace LothiumLogger
     /// <summary>
     /// Object that represent a log event
     /// </summary>
-    public sealed class LogEvent
+    public sealed class LogEvent : ILogEvent
     {
         /// <summary>
         /// Indicates the Date of the log event
@@ -22,7 +19,7 @@ namespace LothiumLogger
         /// <summary>
         /// Indicates the level of the log event
         /// </summary>
-        public LogLevel Level { get; set; }
+        public LogLevelEnum Level { get; set; }
 
         /// <summary>
         /// Contains the message of the log event
@@ -35,7 +32,7 @@ namespace LothiumLogger
         public LogEvent()
         {
             Date = DateTimeOffset.Now;
-            Level = LogLevel.Normal;
+            Level = LogLevelEnum.Normal;
             Message = string.Empty;
         }
 
@@ -45,7 +42,7 @@ namespace LothiumLogger
         /// <param name="date">Indicates the date when the log event occured</param>
         /// <param name="level">Indicates the level of the log event occured</param>
         /// <param name="message">Indicates the message of the log event occured</param>
-        public LogEvent(DateTimeOffset date, LogLevel level, string? message)
+        public LogEvent(DateTimeOffset date, LogLevelEnum level, string? message)
         {
             Date = date;
             Level = level;

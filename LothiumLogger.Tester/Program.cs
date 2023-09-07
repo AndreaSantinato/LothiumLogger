@@ -3,13 +3,15 @@ using LothiumLogger;
 using LothiumLogger.Enumerations;
 using LothiumLogger.Tester.TestModels;
 
+// Starting Point For The Tests
 Console.WriteLine("{--- Starting Point ---}");
 
 // Create a new logger instance
 var logger = new LoggerConfiguration()
-    .AddConsoleSink()
-    .AddFileSink(name: "Log", minimumLogLevel: LogLevel.Normal)
-    .AddFileSink(name: "Err_Log", restrictedToLogLevel: LogLevel.Err)
+    .AddConsoleSinker(theme: ConsoleThemeEnum.LothiumDark)
+    .AddFileSinker(minimumLogLevel: LogLevelEnum.Normal)
+    .AddFileSinker(name: "DebugLogs", restrictedToLogLevel: LogLevelEnum.Debug, typeOfGeneratedFile: LogFileTypeEnum.LothiumLog)
+    .AddFileSinker(name: "ErrorLogs", restrictedToLogLevel: LogLevelEnum.Err, typeOfGeneratedFile: LogFileTypeEnum.LothiumLog)
     .Build();
 
 // Write a sample log messages
@@ -39,4 +41,5 @@ logger.Debug("Variable Value: {@example}", example);
 logger.Error("Test Exception", new Exception("This is a first test exception"));
 logger.Fatal("Fatal Test Exception", new Exception("This is a second test exception"));
 
+// Ending Point For The Tests
 Console.WriteLine("{--- Ending Point ---}");

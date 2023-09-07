@@ -1,13 +1,9 @@
 ﻿// System Class
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 // Custom Class
 using LothiumLogger.Enumerations;
 
-namespace LothiumLogger.Formatters
+namespace LothiumLogger.Sinkers.Formatters
 {
     /// <summary>
     /// Date Formatter Class For The Log Event's Date
@@ -19,30 +15,24 @@ namespace LothiumLogger.Formatters
         /// </summary>
         /// <param name="date">Contains the date of a log event</param>
         /// <returns>An Int with the year value</returns>
-        internal static int GetYearFromDate(DateTimeOffset date)
-        {
-            return date.Year;
-        }
+        public static int GetYearFromDate(DateTimeOffset date) => date.Year;
 
         /// <summary>
         /// Return the month from a date of a log event
         /// </summary>
         /// <param name="date">Contains the date of a log event</param>
         /// <returns>An Int with the month value</returns>
-        internal static int GetMonthFromDate(DateTimeOffset date)
-        {
-            return date.Month;
-        }
+        public static int GetMonthFromDate(DateTimeOffset date) => date.Month;
 
         /// <summary>
         /// Retrive the name of a month from a date
         /// </summary>
         /// <param name="date">Contains the date of a log event</param>
         /// <returns>A String with the month's name</returns>
-        internal static string GetMonthNameFromDate(DateTimeOffset date)
+        public static string GetMonthNameFromDate(DateTimeOffset date)
         {
             {
-                string monthName = String.Empty;
+                string monthName = string.Empty;
                 switch (GetMonthFromDate(date))
                 {
                     #region Genuary
@@ -139,33 +129,30 @@ namespace LothiumLogger.Formatters
         /// </summary>
         /// <param name="date">Contains the date of a log event</param>
         /// <returns>An Int with the day value</returns>
-        internal static int GetDayFromDate(DateTimeOffset date)
-        {
-            return date.Day;
-        }
+        public static int GetDayFromDate(DateTimeOffset date) => date.Day;
 
         /// <summary>
         /// Format the date that will be used for the log based on a choosen format's type
         /// </summary>
         /// <param name="dateFormat">Choosen Date Format</param>
         /// <returns>A String formatted based on the passed Date Fornat</returns>
-        internal static string GenerateLogDate(LogDateFormat dateFormat, DateTimeOffset date)
+        public static string GenerateLogDate(LogDateFormatEnum dateFormat, DateTimeOffset date)
         {
-            string result = String.Empty;
+            string result = string.Empty;
 
             switch (dateFormat)
             {
-                case LogDateFormat.Minimal:
+                case LogDateFormatEnum.Minimal:
                     result = date.ToString("yyyymmdd");
                     break;
-                case LogDateFormat.Standard:
+                case LogDateFormatEnum.Standard:
                     result = date.ToString("yyyy/mm/dd hh:mm:ss");
                     break;
-                case LogDateFormat.Full:
+                case LogDateFormatEnum.Full:
                     var year = GetYearFromDate(date);
                     var monthName = GetMonthNameFromDate(date);
                     var day = GetDayFromDate(date);
-                    result = String.Format("({0}) {1} {2} {3}", year, monthName, day, date.ToString("hh:mm:ss"));
+                    result = string.Format("({0}) {1} {2} {3}", year, monthName, day, date.ToString("hh:mm:ss"));
                     break;
             }
 

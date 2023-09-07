@@ -5,7 +5,7 @@ using Microsoft.Win32.SafeHandles;
 // Custom Class
 using LothiumLogger.Enumerations;
 using LothiumLogger.Interfaces;
-using LothiumLogger.Formatters;
+using LothiumLogger.Sinkers.Formatters;
 
 namespace LothiumLogger
 {
@@ -68,19 +68,12 @@ namespace LothiumLogger
         /// <param name="obj">Contains an optional object to be serialized</param>
         private void WriteNewLog(
             LoggerConfiguration loggerConfig,
-            LogEvent logEvent,
+            ILogEvent logEvent,
             object obj
         )
         {
             if (loggerConfig == null) return;
-            if (loggerConfig.ConsoleSinkRules == null && (loggerConfig.FileSinkRules == null || loggerConfig.FileSinkRules.Count() == 0))
-            {
-                return;
-            }
-            else if (loggerConfig.ConsoleSinkRules == null)
-            {
-                return;
-            }
+            if (loggerConfig.SinkRules == null || loggerConfig.SinkRules.Count() == 0) return;
             if (logEvent == null) return;
 
             // If the object is not null it will format the message with the serialized object result
@@ -88,43 +81,18 @@ namespace LothiumLogger
             {
                 if (obj.GetType() == typeof(Exception))
                 {
-                    logEvent = JsonFormatter.FormatException((Exception)obj, logEvent);
+                    logEvent = (LogEvent)JsonFormatter.FormatException((Exception)obj, logEvent);
                 }
                 else
                 {
-                    logEvent = JsonFormatter.FormatObject(obj, logEvent);
+                    logEvent = (LogEvent)JsonFormatter.FormatObject(obj, logEvent);
                 }
             }
 
-            // Console Sink
-            if (loggerConfig.ConsoleSinkRules != null)
+            // Sink Management
+            foreach (var sink in loggerConfig.SinkRules)
             {
-                var minimumLevel = loggerConfig.ConsoleSinkRules.MinimumLevel;
-                var restrictToLevel = loggerConfig.ConsoleSinkRules.RestrictedToLevel;
-
-                if (restrictToLevel != LogLevel.Normal && logEvent.Level != restrictToLevel) return;
-
-                if (!loggerConfig.ConsoleSinkRules.Initialize(loggerConfig, logEvent))
-                {
-                    loggerConfig.ConsoleSinkRules.Write(logEvent);
-                }
-            }
-
-            // File Sink
-            foreach (var fileSink in loggerConfig.FileSinkRules)
-            {
-                if (fileSink != null)
-                {
-                    var minimumLevel = loggerConfig.ConsoleSinkRules.MinimumLevel;
-                    var restrictToLevel = loggerConfig.ConsoleSinkRules.RestrictedToLevel;
-
-                    if (restrictToLevel != LogLevel.Normal && logEvent.Level != restrictToLevel) return;
-
-                    if (!fileSink.Initialize(loggerConfig, logEvent))
-                    {
-                        fileSink.Write(logEvent);
-                    }
-                }
+                if (sink.Initialize(loggerConfig, logEvent)) sink.Write(logEvent);
             }
         }
 
@@ -137,7 +105,7 @@ namespace LothiumLogger
         private void WriteNewLogFromException(
             LoggerConfiguration loggerConfig,
             Exception ex,
-            LogLevel level,
+            LogLevelEnum level,
             string message
         )
         {
@@ -159,14 +127,14 @@ namespace LothiumLogger
         /// <param name="message">Contains the log message</param>
         /// <param name="obj">Contains the optional object to serialize into the log</param>
         public void Write(string message, object? obj = null)
-                => Write(new LogEvent(DateTime.Now, LogLevel.Normal, message), obj);
+            => WriteNewLog(_config, new LogEvent(DateTimeOffset.Now, LogLevelEnum.Normal, message), obj);
 
         /// <summary>
         /// Write a normal log
         /// </summary>
         /// <param name="logEvent">Contains the log event</param>
         /// <param name="obj">Contains the optional object to serialize into the log</param>
-        public void Write(LogEvent logEvent, object? obj = null)
+        public void Write(ILogEvent logEvent, object? obj = null)
             => WriteNewLog(_config, logEvent, obj);
 
         #endregion
@@ -179,14 +147,14 @@ namespace LothiumLogger
         /// <param name="message">Contains the log message</param>
         /// <param name="obj">Contains the optional object to serialize into the log</param>
         public void Debug(string message, object? obj = null)
-            => Debug(new LogEvent(DateTime.Now, LogLevel.Debug, message), obj);
+            => WriteNewLog(_config, new LogEvent(DateTimeOffset.Now, LogLevelEnum.Debug, message), obj);
 
         /// <summary>
         /// Write a normal log
         /// </summary>
         /// <param name="logEvent">Contains the log event</param>
         /// <param name="obj">Contains the optional object to serialize into the log</param>
-        public void Debug(LogEvent logEvent, object? obj = null)
+        public void Debug(ILogEvent logEvent, object? obj = null)
             => WriteNewLog(_config, logEvent, obj);
 
         #endregion
@@ -199,14 +167,14 @@ namespace LothiumLogger
         /// <param name="message">Contains the log message</param>
         /// <param name="obj">Contains the optional object to serialize into the log</param>
         public void Information(string message, object? obj = null)
-            => Information(new LogEvent(DateTime.Now, LogLevel.Info, message), obj);
+            => WriteNewLog(_config, new LogEvent(DateTimeOffset.Now, LogLevelEnum.Info, message), obj);
 
         /// <summary>
         /// Write a information log
         /// </summary>
         /// <param name="logEvent">Contains the log event</param>
         /// <param name="obj">Contains the optional object to serialize into the log</param>
-        public void Information(LogEvent logEvent, object? obj = null)
+        public void Information(ILogEvent logEvent, object? obj = null)
             => WriteNewLog(_config, logEvent, obj);
 
         #endregion
@@ -219,14 +187,14 @@ namespace LothiumLogger
         /// <param name="message">Contains the log message</param>
         /// <param name="obj">Contains the optional object to serialize into the log</param>
         public void Warning(string message, object? obj = null)
-            => Warning(new LogEvent(DateTime.Now, LogLevel.Warn, message), obj);
+            => WriteNewLog(_config, new LogEvent(DateTimeOffset.Now, LogLevelEnum.Warn, message), obj);
 
         /// <summary>
         /// Write a information log
         /// </summary>
         /// <param name="logEvent">Contains the log event</param>
         /// <param name="obj">Contains the optional object to serialize into the log</param>
-        public void Warning(LogEvent logEvent, object? obj = null)
+        public void Warning(ILogEvent logEvent, object? obj = null)
             => WriteNewLog(_config, logEvent, obj);
 
         #endregion
@@ -239,18 +207,18 @@ namespace LothiumLogger
         /// <param name="message">Contains the log message</param>
         /// <param name="obj">Contains the optional object to serialize into the log</param>
         public void Error(string message, object? obj = null)
-            => Error(new LogEvent(DateTime.Now, LogLevel.Err, message), obj);
+            => WriteNewLog(_config, new LogEvent(DateTimeOffset.Now, LogLevelEnum.Err, message), obj);
 
         /// <summary>
         /// Write a error log
         /// </summary>
         /// <param name="logEvent">Contains the log event</param>
         /// <param name="obj">Contains the optional object to serialize into the log</param>
-        public void Error(LogEvent logEvent, object? obj = null)
+        public void Error(ILogEvent logEvent, object? obj = null)
         {
             if (obj != null && obj.GetType() == typeof(Exception))
             {
-                WriteNewLogFromException(_config, (Exception)obj, LogLevel.Err, logEvent.Message);
+                WriteNewLogFromException(_config, (Exception)obj, LogLevelEnum.Err, logEvent.Message);
             }
             else
             {
@@ -263,14 +231,14 @@ namespace LothiumLogger
         /// </summary>
         /// <param name="exception">Contains the occured exception</param>
         public void Error(Exception exception)
-            => Fatal(exception, new LogEvent(DateTime.Now, LogLevel.Err, "Exception Occured"));
+            => Fatal(exception, new LogEvent(DateTimeOffset.Now, LogLevelEnum.Err, "Exception Occured"));
 
         /// <summary>
         /// Write an error log from an exception
         /// </summary>
         /// <param name="exception">Contains the occured exception</param>
         /// <param name="logEvent">Contains the log event</param>
-        public void Error(Exception exception, LogEvent logEvent)
+        public void Error(Exception exception, ILogEvent logEvent)
             => Error(logEvent, exception);
 
         #endregion
@@ -283,18 +251,18 @@ namespace LothiumLogger
         /// <param name="message">Contains the log message</param>
         /// <param name="obj">Contains the optional object to serialize into the log</param>
         public void Fatal(string message, object? obj = null)
-            => Fatal(new LogEvent(DateTime.Now, LogLevel.Fatal, message), obj);
+            => WriteNewLog(_config, new LogEvent(DateTimeOffset.Now, LogLevelEnum.Fatal, message), obj);
 
         /// <summary>
         /// Write a fatal log
         /// </summary>
         /// <param name="message">Contains the log message</param>
         /// <param name="obj">Contains the optional object to serialize into the log</param>
-        public void Fatal(LogEvent logEvent, object? obj = null)
+        public void Fatal(ILogEvent logEvent, object? obj = null)
         {
             if (obj != null && obj.GetType() == typeof(Exception))
             {
-                WriteNewLogFromException(_config, (Exception)obj, LogLevel.Fatal, logEvent.Message);
+                WriteNewLogFromException(_config, (Exception)obj, LogLevelEnum.Fatal, logEvent.Message);
             }
             else
             {
@@ -307,14 +275,14 @@ namespace LothiumLogger
         /// </summary>
         /// <param name="exception">Contains the occured exception</param>
         public void Fatal(Exception exception)
-            => Fatal(exception, new LogEvent(DateTime.Now, LogLevel.Fatal, "Fatal Exception Occured"));
+            => Fatal(exception, new LogEvent(DateTimeOffset.Now, LogLevelEnum.Fatal, "Fatal Exception Occured"));
 
         /// <summary>
         /// Write an fatal log from an exception
         /// </summary>
         /// <param name="exception">Contains the occured exception</param>
         /// <param name="logEvent">Contains the log event</param>
-        public void Fatal(Exception exception, LogEvent logEvent)
+        public void Fatal(Exception exception, ILogEvent logEvent)
             => Fatal(logEvent, exception);
 
         #endregion

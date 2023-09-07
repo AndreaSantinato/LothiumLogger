@@ -12,22 +12,32 @@
     <PackageIcon>LothiumLogger.png</PackageIcon>
     <RepositoryUrl>https://github.com/AndreaSantinato/LothiumLogger</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>Log; Logger; LothiumSolutions; Lothium; Solutions</PackageTags>
+    <PackageTags>Log; Logger; LothiumLogger; Lothium; Solutions; LothiumSolutions;</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-    <AssemblyVersion>1.2.0.0</AssemblyVersion>
-    <FileVersion>1.2.0.0</FileVersion>
+    <AssemblyVersion>1.3.0.0</AssemblyVersion>
+    <FileVersion>1.3.0.0</FileVersion>
     <Authors>LothiumSolutions</Authors>
-    <Version>1.2.0</Version>
-    <PackageReleaseNotes>Completely rewrite the library's core logic and methods for better performance and code rewrites.</PackageReleaseNotes>
+    <Version>1.3.0</Version>
+    <PackageReleaseNotes>Redesign all the library structure to manage more functionality and customization in the future release:
+- Reorganize library's folders
+- Reorganize library's classes
+- Changes  to the Logger Class Core's Methods
+- Changes to the Console's Sinker Methods
+- Changes to the File's Sinker Methods
+- Included the new AddCustomSinker() method inside the LoggerConfiguration Class to make able to do custom logging when using the library</PackageReleaseNotes>
+    <SignAssembly>False</SignAssembly>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Remove="Core\**" />
+    <Compile Remove="Sinks\**" />
     <EmbeddedResource Remove="Core\**" />
+    <EmbeddedResource Remove="Sinks\**" />
     <None Remove="Core\**" />
+    <None Remove="Sinks\**" />
   </ItemGroup>
 
   <ItemGroup>

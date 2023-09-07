@@ -1,13 +1,10 @@
 ﻿// System Class
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 // Custom Class
 using LothiumLogger.Enumerations;
+using LothiumLogger.Interfaces;
 
-namespace LothiumLogger.Formatters
+namespace LothiumLogger.Sinkers.Formatters
 {
     /// <summary>
     /// Formatter Class For The Log Events
@@ -21,13 +18,13 @@ namespace LothiumLogger.Formatters
         /// <param name="existingContent">Contains the actual file content</param>
         /// <param name="newContent">Contains the new content to be added to the file</param>
         /// <returns>A combined content to write inside the file</returns>
-        internal static string FormatLogFile(string existingContent, string newContent)
+        public static string FormatLogFile(string existingContent, string newContent)
         {
-            string result = String.Empty;
-            if (String.IsNullOrEmpty(newContent)) return string.Empty;
-            if (!String.IsNullOrEmpty(existingContent))
+            string result = string.Empty;
+            if (string.IsNullOrEmpty(newContent)) return string.Empty;
+            if (!string.IsNullOrEmpty(existingContent))
             {
-                result = String.Concat(existingContent, Environment.NewLine, newContent);
+                result = string.Concat(existingContent, Environment.NewLine, newContent);
             }
             else
             {
@@ -42,16 +39,16 @@ namespace LothiumLogger.Formatters
         /// <param name="logEvent">Contains the log event generated</param>
         /// <param name="dateFormat">Contains the log date format</param>
         /// <returns></returns>
-		internal static string FormatLogMessage(LogEvent logEvent, LogDateFormat dateFormat)
+		public static string FormatLogMessage(ILogEvent logEvent, LogDateFormatEnum dateFormat)
         {
-            if (logEvent == null) return String.Empty;
-            if (String.IsNullOrEmpty(logEvent.Message)) return String.Empty;
+            if (logEvent == null) return string.Empty;
+            if (string.IsNullOrEmpty(logEvent.Message)) return string.Empty;
 
             var date = DateFormatter.GenerateLogDate(dateFormat, logEvent.Date);
-            var level = Enum.GetName(typeof(LogLevel), logEvent.Level);
+            var level = Enum.GetName(typeof(LogLevelEnum), logEvent.Level);
             var message = logEvent.Message;
 
-            return String.Format("[{0}] [{1}]: {2}", date, level, message);
+            return string.Format("[{0}] [{1}]: {2}", date, level, message);
         }
 
         /// <summary>
@@ -61,21 +58,21 @@ namespace LothiumLogger.Formatters
         /// <param name="dateFormat"></param>
         /// <param name="existedFileContent"></param>
         /// <returns></returns>
-        internal static string FormatFullLog(List<LogEvent> logEvents, LogDateFormat dateFormat, string existedFileContent = "")
+        public static string FormatFullLog(List<ILogEvent> logEvents, LogDateFormatEnum dateFormat, string existedFileContent = "")
         {
-            var innerContent = String.Empty;
+            var innerContent = string.Empty;
 
-            if (!String.IsNullOrEmpty(existedFileContent)) innerContent = String.Concat(existedFileContent, Environment.NewLine);
+            if (!string.IsNullOrEmpty(existedFileContent)) innerContent = string.Concat(existedFileContent, Environment.NewLine);
 
             foreach (var logEvent in logEvents)
             {
-                innerContent = String.Concat("\t(", FormatLogMessage(logEvent, dateFormat), ");", Environment.NewLine);
+                innerContent = string.Concat("\t(", FormatLogMessage(logEvent, dateFormat), ");", Environment.NewLine);
             }
 
             var date = DateTime.Now.ToString("yy-MM-dd");
-            var outContent = String.Format("EventsOfDate:({0})", date);
+            var outContent = string.Format("EventsOfDate:({0})", date);
 
-            return String.Concat(outContent, Environment.NewLine, "{", Environment.NewLine, innerContent, "}");
+            return string.Concat(outContent, Environment.NewLine, "{", Environment.NewLine, innerContent, "}");
         }
     }
 }
