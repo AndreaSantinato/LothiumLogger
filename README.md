@@ -142,12 +142,12 @@ I welcome any type of bug reports and suggestions through my GitHub [Issue Track
 ### Latest Release Changes
 
 Redesign all the library structure to manage more functionality and customization in the future release:
-    - Reorganize library's folders
-    - Reorganize library's classes
-    - Changes  to the Logger Class Core's Methods
-    - Changes to the Console's Sinker Methods
-    - Changes to the File's Sinker Methods
-    - Included the new AddCustomSinker() method inside the LoggerConfiguration Class to make able to do custom logging when using the library
+- Reorganize library's folders
+- Reorganize library's classes
+- Changes  to the Logger Class Core's Methods
+- Changes to the Console's Sinker Methods
+- Changes to the File's Sinker Methods
+- Included the new AddCustomSinker() method inside the LoggerConfiguration Class to make able to do custom logging when using the library
 
 ### Copyright
 
