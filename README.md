@@ -58,13 +58,6 @@ var logger = new Logger(settings => {
 The file's sink offer the ability to write logs to one or more files/folders, like mentioned before, this sink required a set of options passed through a dedicated object to properly working.
 This options class have different type of property, the minimum required are the following:
 
-The 'AddFileSink()' have this property to be inizialized:
-    - name: indicate the name of for the final created file
-    - path: indicate the path where the final file will be created
-    - minimumLogLevel: indicate the minimum accepted logging level for the sink.
-    - restrictedToLogLevel: indicate the only accepted loggin level for the sink, this value overwrite the minimum one.
-    - typeOfGeneratedFile: indicate the type of the final created file (for now there is only two types: GenericLog & LothiumLog)
-
 ```csharp
 var logger = new Logger(settings => {
     settings.AddFileSink(options => {
@@ -167,16 +160,12 @@ In The feature i'll separate the Master Branch from the Develop Branch
 I welcome any type of bug reports and suggestions through my GitHub [Issue Tracker](https://github.com/AndreaSantinato/LothiumLogger/issues).
 
 ### Latest Release Changes
-
-Redesign all the library structure to manage more functionality and customization in the future release:
-- Reorganize library's folders
-- Reorganize library's classes
-- Changes  to the Logger Class Core's Methods
-- Changes to the Console's Sinker Methods
-- Changes to the File's Sinker Methods
-- Included the new AddCustomSinker() method inside the LoggerConfiguration Class to make able to do custom logging when using the library
+Redesign the library configuration classes to match a simple creation and configuration.
+- Added class configuration for Sink classes.
+- Changed the logic of the internal writing events.
+- Added asynchronous methods.
 
 ### Copyright
 
-_LothiumLogger is copyright &copy; 2023 - Provided under the [GNU General Public License v3.0](https://github.com/AndreaSantinato/LothiumLogger/blob/main/LICENSE)._
+_LothiumLogger is copyright &copy; 2024 - Provided under the [GNU General Public License v3.0](https://github.com/AndreaSantinato/LothiumLogger/blob/main/LICENSE)._
 
