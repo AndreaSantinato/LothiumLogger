@@ -52,11 +52,14 @@ LothiumLogger.Tester/obj/Debug/net6.0/ref/LothiumLogger.Tester.dll
 LothiumLogger.Tester/obj/Debug/net6.0/refint/LothiumLogger.Tester.dll
 LothiumLogger.Tester/obj/LothiumLogger.Tester.csproj.nuget.dgspec.json
 LothiumLogger.Tester/obj/LothiumLogger.Tester.csproj.nuget.g.props
-LothiumLogger.Tester/obj/Release/net6.0/apphost.exe
-LothiumLogger.Tester/obj/Release/net6.0/.NETCoreApp,Version=v6.0.AssemblyAttributes.cs
 LothiumLogger.Tester/obj/project.nuget.cache
 LothiumLogger.Tester/obj/project.assets.json
 LothiumLogger.Tester/obj/LothiumLogger.Tester.csproj.nuget.g.targets
+LothiumLogger.Tester/obj/Release/net6.0/apphost.exe
+LothiumLogger.Tester/obj/Release/net6.0/.NETCoreApp,Version=v6.0.AssemblyAttributes.cs
+LothiumLogger.Tester/obj/Release/net6.0/LothiumLogger.AssemblyInfo.cs
+LothiumLogger.Tester/obj/Release/net6.0/LothiumLogger.GeneratedMSBuildEditorConfig.editorconfig
+LothiumLogger.Tester/obj/Release/net6.0/LothiumLogger.GlobalUsings.g.cs
 LothiumLogger.Tester/obj/Release/net6.0/refint/LothiumLogger.Tester.dll
 LothiumLogger.Tester/obj/Release/net6.0/ref/LothiumLogger.Tester.dll
 LothiumLogger.Tester/obj/Release/net6.0/LothiumLogger.Tester.pdb
@@ -322,3 +325,6 @@ LothiumLogger/bin/Release/net6.0/LothiumLogger.Formatter.pdb
 LothiumLogger/obj/Debug/net6.0/LothiumLogger.csproj.AssemblyReference.cache
 LothiumLogger/obj/Debug/net6.0/LothiumLogger.csproj.CopyComplete
 *.log
+LothiumLogger/.DS_Store
+*.info
+*.info
