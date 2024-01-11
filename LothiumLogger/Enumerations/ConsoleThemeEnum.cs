@@ -1,15 +1,12 @@
-﻿// System Class
-using System;
+﻿// Enumerations Namespace
+namespace LothiumLogger.Enumerations;
 
-namespace LothiumLogger.Enumerations
+/// <summary>
+/// Define the names of the console's themes
+/// </summary>
+public enum ConsoleThemeEnum
 {
-    /// <summary>
-    /// Define the names of the console's themes
-    /// </summary>
-    public enum ConsoleThemeEnum
-    {
-        None = 0,
-        LothiumLight = 1,
-        LothiumDark = 2,
-    }
+    Default = 0,
+    Light = 1,
+    Dark = 2,
 }

@@ -1,18 +1,15 @@
-﻿// System Class
-using System;
+﻿// Enumerations Namespace
+namespace LothiumLogger.Enumerations;
 
-namespace LothiumLogger.Enumerations
+/// <summary>
+/// Define the Logging Level
+/// </summary>
+public enum LogLevelEnum
 {
-    /// <summary>
-    /// Define the Logging Level
-    /// </summary>
-    public enum LogLevelEnum
-    {
-        Normal = 0,
-        Debug = 1,
-        Info = 2,
-        Warn = 3,
-        Err = 4,
-        Fatal = 5,
-    }
+    Normal = 0,
+    Debug = 1,
+    Info = 2,
+    Warn = 3,
+    Err = 4,
+    Fatal = 5,
 }

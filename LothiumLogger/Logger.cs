@@ -1,290 +1,393 @@
-﻿// System Class
-using System;
-using System.Runtime.InteropServices;
-using Microsoft.Win32.SafeHandles;
-// Custom Class
+﻿// Custom Class
 using LothiumLogger.Enumerations;
 using LothiumLogger.Interfaces;
-using LothiumLogger.Sinkers.Formatters;
+using LothiumLogger.Configurations;
 
-namespace LothiumLogger
+// Main Namespace
+namespace LothiumLogger;
+
+/// <summary>
+/// Defines a new Logger instance
+/// </summary>
+public sealed class Logger : ILogger, IDisposable
 {
+    private bool _disposed = false;
+    private static LoggerSettings? _settings;
+
+    #region Class Constructors & Destructors
+
     /// <summary>
-    /// Logger Class
+    /// Logger Instance Constructor
     /// </summary>
-    public sealed class Logger : ILogger, IDisposable
+    /// <param name="settings">Contains the settings used to create a new logger's instance</param>
+    public Logger(LoggerSettings settings) => _settings = settings;
+
+    /// <summary>
+    /// Logger Instance Constructor
+    /// </summary>
+    /// <param name="settings">Contains the delegate action for the settings used to create a new logger's instance</param>
+    public Logger(Action<LoggerSettings> settings) => _settings = new LoggerSettings(settings);
+
+    /// <summary>
+    /// Dispose the current Logger instance
+    /// </summary>
+    public void Dispose()
     {
-        #region Class Property
-
-        /// <summary>
-        /// Used to detect redundant calls
-        /// </summary>
-        private bool _disposedValue;
-
-        /// <summary>
-        /// Instantiate a SafeHandle instance.
-        /// </summary>
-        private SafeHandle _safeHandle = new SafeFileHandle(IntPtr.Zero, true);
-
-        /// <summary>
-        /// Contains the current configuration for the logger's instance
-        /// </summary>
-        private readonly LoggerConfiguration _config;
-
-        #endregion
-
-        #region Class Constructor & Destructor
-
-        /// <summary>
-        /// Logger Instance Constructor
-        /// </summary>
-        /// <param name="configuration">Contains the logger configuration used to create this instance</param>
-        public Logger(LoggerConfiguration configuration)
-        {
-            _config = configuration;
-        }
-
-        /// <summary>
-        /// Dispose the Logger Instance Previusly Created
-        /// </summary>
-        public void Dispose()
-        {
-            if (!_disposedValue)
-            {
-                _safeHandle.Dispose();
-                _disposedValue = true;
-            }
-        }
-
-        #endregion
-
-        #region Core Private Methods
-
-        /// <summary>
-        /// Manage the writing of a new log based on the logger configuration and its writing settings
-        /// </summary>
-        /// <param name="loggerConfig">Contains the current logger configuration</param>
-        /// <param name="logEvent">Contains the log event to write</param>
-        /// <param name="obj">Contains an optional object to be serialized</param>
-        private void WriteNewLog(
-            LoggerConfiguration loggerConfig,
-            ILogEvent logEvent,
-            object obj
-        )
-        {
-            if (loggerConfig == null) return;
-            if (loggerConfig.SinkRules == null || loggerConfig.SinkRules.Count() == 0) return;
-            if (logEvent == null) return;
-
-            // If the object is not null it will format the message with the serialized object result
-            if (obj != null)
-            {
-                if (obj.GetType() == typeof(Exception))
-                {
-                    logEvent = (LogEvent)JsonFormatter.FormatException((Exception)obj, logEvent);
-                }
-                else
-                {
-                    logEvent = (LogEvent)JsonFormatter.FormatObject(obj, logEvent);
-                }
-            }
-
-            // Sink Management
-            foreach (var sink in loggerConfig.SinkRules)
-            {
-                if (sink.Initialize(loggerConfig, logEvent)) sink.Write(logEvent);
-            }
-        }
-
-        /// <summary>
-        /// Manage the writing of a new log based on an occured exception
-        /// </summary>
-        /// <param name="loggerConfig">Contains the current logger configuration</param>
-        /// <param name="ex">Contains the occured exception</param>
-        /// <param name="message">Contains a message</param>
-        private void WriteNewLogFromException(
-            LoggerConfiguration loggerConfig,
-            Exception ex,
-            LogLevelEnum level,
-            string message
-        )
-        {
-            if (ex == null) return;
-            if (String.IsNullOrEmpty(message))
-            {
-                message = "An error occured during the code execution:";
-            }
-            WriteNewLog(loggerConfig, new LogEvent(DateTime.Now, level, message), ex);
-        }
-
-        #endregion
-
-        #region Default Log Methods
-
-        /// <summary>
-        /// Write a normal log
-        /// </summary>
-        /// <param name="message">Contains the log message</param>
-        /// <param name="obj">Contains the optional object to serialize into the log</param>
-        public void Write(string message, object? obj = null)
-            => WriteNewLog(_config, new LogEvent(DateTimeOffset.Now, LogLevelEnum.Normal, message), obj);
-
-        /// <summary>
-        /// Write a normal log
-        /// </summary>
-        /// <param name="logEvent">Contains the log event</param>
-        /// <param name="obj">Contains the optional object to serialize into the log</param>
-        public void Write(ILogEvent logEvent, object? obj = null)
-            => WriteNewLog(_config, logEvent, obj);
-
-        #endregion
-
-        #region Debug Log Methods
-
-        /// <summary>
-        /// Write a debug log
-        /// </summary>
-        /// <param name="message">Contains the log message</param>
-        /// <param name="obj">Contains the optional object to serialize into the log</param>
-        public void Debug(string message, object? obj = null)
-            => WriteNewLog(_config, new LogEvent(DateTimeOffset.Now, LogLevelEnum.Debug, message), obj);
-
-        /// <summary>
-        /// Write a normal log
-        /// </summary>
-        /// <param name="logEvent">Contains the log event</param>
-        /// <param name="obj">Contains the optional object to serialize into the log</param>
-        public void Debug(ILogEvent logEvent, object? obj = null)
-            => WriteNewLog(_config, logEvent, obj);
-
-        #endregion
-
-        #region Information Log Methods
-
-        /// <summary>
-        /// Write a information log
-        /// </summary>
-        /// <param name="message">Contains the log message</param>
-        /// <param name="obj">Contains the optional object to serialize into the log</param>
-        public void Information(string message, object? obj = null)
-            => WriteNewLog(_config, new LogEvent(DateTimeOffset.Now, LogLevelEnum.Info, message), obj);
-
-        /// <summary>
-        /// Write a information log
-        /// </summary>
-        /// <param name="logEvent">Contains the log event</param>
-        /// <param name="obj">Contains the optional object to serialize into the log</param>
-        public void Information(ILogEvent logEvent, object? obj = null)
-            => WriteNewLog(_config, logEvent, obj);
-
-        #endregion
-
-        #region Warning Log Methods
-
-        /// <summary>
-        /// Write a warning log
-        /// </summary>
-        /// <param name="message">Contains the log message</param>
-        /// <param name="obj">Contains the optional object to serialize into the log</param>
-        public void Warning(string message, object? obj = null)
-            => WriteNewLog(_config, new LogEvent(DateTimeOffset.Now, LogLevelEnum.Warn, message), obj);
-
-        /// <summary>
-        /// Write a information log
-        /// </summary>
-        /// <param name="logEvent">Contains the log event</param>
-        /// <param name="obj">Contains the optional object to serialize into the log</param>
-        public void Warning(ILogEvent logEvent, object? obj = null)
-            => WriteNewLog(_config, logEvent, obj);
-
-        #endregion
-
-        #region Error Log Methods
-
-        /// <summary>
-        /// Write an error log
-        /// </summary>
-        /// <param name="message">Contains the log message</param>
-        /// <param name="obj">Contains the optional object to serialize into the log</param>
-        public void Error(string message, object? obj = null)
-            => WriteNewLog(_config, new LogEvent(DateTimeOffset.Now, LogLevelEnum.Err, message), obj);
-
-        /// <summary>
-        /// Write a error log
-        /// </summary>
-        /// <param name="logEvent">Contains the log event</param>
-        /// <param name="obj">Contains the optional object to serialize into the log</param>
-        public void Error(ILogEvent logEvent, object? obj = null)
-        {
-            if (obj != null && obj.GetType() == typeof(Exception))
-            {
-                WriteNewLogFromException(_config, (Exception)obj, LogLevelEnum.Err, logEvent.Message);
-            }
-            else
-            {
-                WriteNewLog(_config, logEvent, obj);
-            }
-        }
-
-        /// <summary>
-        /// Write an error log from an exception
-        /// </summary>
-        /// <param name="exception">Contains the occured exception</param>
-        public void Error(Exception exception)
-            => Fatal(exception, new LogEvent(DateTimeOffset.Now, LogLevelEnum.Err, "Exception Occured"));
-
-        /// <summary>
-        /// Write an error log from an exception
-        /// </summary>
-        /// <param name="exception">Contains the occured exception</param>
-        /// <param name="logEvent">Contains the log event</param>
-        public void Error(Exception exception, ILogEvent logEvent)
-            => Error(logEvent, exception);
-
-        #endregion
-
-        #region Fatal Log Methods
-
-        /// <summary>
-        /// Write a fatal log
-        /// </summary>
-        /// <param name="message">Contains the log message</param>
-        /// <param name="obj">Contains the optional object to serialize into the log</param>
-        public void Fatal(string message, object? obj = null)
-            => WriteNewLog(_config, new LogEvent(DateTimeOffset.Now, LogLevelEnum.Fatal, message), obj);
-
-        /// <summary>
-        /// Write a fatal log
-        /// </summary>
-        /// <param name="message">Contains the log message</param>
-        /// <param name="obj">Contains the optional object to serialize into the log</param>
-        public void Fatal(ILogEvent logEvent, object? obj = null)
-        {
-            if (obj != null && obj.GetType() == typeof(Exception))
-            {
-                WriteNewLogFromException(_config, (Exception)obj, LogLevelEnum.Fatal, logEvent.Message);
-            }
-            else
-            {
-                WriteNewLog(_config, logEvent, obj);
-            }
-        }
-
-        /// <summary>
-        /// Write a fatal log from an exception
-        /// </summary>
-        /// <param name="exception">Contains the occured exception</param>
-        public void Fatal(Exception exception)
-            => Fatal(exception, new LogEvent(DateTimeOffset.Now, LogLevelEnum.Fatal, "Fatal Exception Occured"));
-
-        /// <summary>
-        /// Write an fatal log from an exception
-        /// </summary>
-        /// <param name="exception">Contains the occured exception</param>
-        /// <param name="logEvent">Contains the log event</param>
-        public void Fatal(Exception exception, ILogEvent logEvent)
-            => Fatal(logEvent, exception);
-
-        #endregion
+        DisposeResource(true);
+        GC.SuppressFinalize(this);
     }
+
+    /// <summary>
+    /// Destructor to ensure that Dispose is called if the user forgets
+    /// </summary>
+    ~Logger() => DisposeResource(false);
+
+    #endregion
+
+    #region Core Methods (Synchronous & Asynchronous)
+
+    /// <summary>
+    /// Perform the disposing of all used resources inside this instance
+    /// </summary>
+    /// <param name="disposing">Indicates if the resource must be disposed</param>
+    private void DisposeResource(bool disposing)
+    {
+        // If class was alredy disposed before exit the method
+        if (_disposed) return;
+
+        // Perform the actual disposing methods
+        if (disposing) _settings = null;
+
+        // Set the flag that defines this instance already disposed
+        _disposed = true;
+    }
+
+    /// <summary>
+    /// Manage the writing of a new log based on the logger configuration and its writing settings
+    /// </summary>
+    /// <param name="logEvent">Contains the log event to write</param>
+    /// <param name="obj">Contains an optional object to be serialized</param>
+    private void WriteLogEvent(LogEvent logEvent, object? obj = null)
+    {
+        // Validate required parameters
+        LoggerValidator.ThrowIfLoggerSettingsNull(_settings, nameof(_settings), true);
+        LoggerValidator.ThrowIfLogEventNull((LogEvent)logEvent, nameof(logEvent), true);
+        
+        // Check if there is an object to serialize
+        if (obj is not null)
+        {
+            logEvent = obj.GetType() == typeof(Exception) 
+                ? LogEvent.FormatFromException((Exception)obj, logEvent.Level) 
+                : LogEvent.FormatFromObject(obj, logEvent.Message!, logEvent.Level);
+        }
+
+        // Perform the write method for every single sink configured
+        _settings!.Sinks!.ForEach(x => {
+            if (x.ValidateWriting(logEvent)) x.Write(logEvent);
+        });
+    }
+
+    /// <summary>
+    /// Manage the asynchronous writing of a new log based on the logger configuration and its writing settings
+    /// </summary>
+    /// <param name="logEvent">Contains the log event to write</param>
+    /// <param name="obj">Contains an optional object to be serialized</param>
+    private async Task WriteLogEventAsync(LogEvent logEvent, object? obj = null)
+        => await Task.Run(() => WriteLogEvent(logEvent, obj));
+
+    #endregion
+
+    #region Default Log Methods (Synchronous)
+
+    /// <summary>
+    /// Write a normal log
+    /// </summary>
+    /// <param name="message">Contains the log message</param>
+    /// <param name="obj">Contains the optional object to serialize into the log</param>
+    public void Write(string message, object? obj = null)
+        => Write(new LogEvent(DateTimeOffset.Now, LogLevelEnum.Normal, message), obj);
+
+    /// <summary>
+    /// Write a normal log
+    /// </summary>
+    /// <param name="logEvent">Contains the log event</param>
+    /// <param name="obj">Contains the optional object to serialize into the log</param>
+    public void Write(LogEvent logEvent, object? obj = null)
+        => WriteLogEvent(logEvent, obj);
+
+    #endregion
+    #region Default Log Methods (Asynchronous)
+
+    /// <summary>
+    /// Write a normal log
+    /// </summary>
+    /// <param name="message">Contains the log message</param>
+    /// <param name="obj">Contains the optional object to serialize into the log</param>
+    public async Task WriteAsync(string message, object? obj = null)
+        => await WriteAsync(new LogEvent(DateTimeOffset.Now, LogLevelEnum.Normal, message), obj);
+
+    /// <summary>
+    /// Write a normal log
+    /// </summary>
+    /// <param name="logEvent">Contains the log event</param>
+    /// <param name="obj">Contains the optional object to serialize into the log</param>
+    public async Task WriteAsync(LogEvent logEvent, object? obj = null)
+        => await WriteLogEventAsync(logEvent, obj);
+
+    #endregion
+
+    #region Debug Log Methods (Synchronous)
+
+    /// <summary>
+    /// Write a debug log
+    /// </summary>
+    /// <param name="message">Contains the log message</param>
+    /// <param name="obj">Contains the optional object to serialize into the log</param>
+    public void Debug(string message, object? obj = null)
+        => Debug(new LogEvent(DateTimeOffset.Now, LogLevelEnum.Debug, message), obj);
+
+    /// <summary>
+    /// Write a normal log
+    /// </summary>
+    /// <param name="logEvent">Contains the log event</param>
+    /// <param name="obj">Contains the optional object to serialize into the log</param>
+    public void Debug(LogEvent logEvent, object? obj = null)
+        => WriteLogEvent(logEvent, obj);
+
+    #endregion
+    #region Debug Log Methods (Asynchronous)
+
+    /// <summary>
+    /// Write a debug log
+    /// </summary>
+    /// <param name="message">Contains the log message</param>
+    /// <param name="obj">Contains the optional object to serialize into the log</param>
+    public async Task DebugAsync(string message, object? obj = null)
+        => await DebugAsync(new LogEvent(DateTimeOffset.Now, LogLevelEnum.Normal, message), obj);
+
+    /// <summary>
+    /// Write a debug log
+    /// </summary>
+    /// <param name="logEvent">Contains the log event</param>
+    /// <param name="obj">Contains the optional object to serialize into the log</param>
+    public async Task DebugAsync(LogEvent logEvent, object? obj = null)
+        => await WriteLogEventAsync(logEvent, obj);
+
+    #endregion
+
+    #region Information Log Methods (Synchronous)
+
+    /// <summary>
+    /// Write a information log
+    /// </summary>
+    /// <param name="message">Contains the log message</param>
+    /// <param name="obj">Contains the optional object to serialize into the log</param>
+    public void Information(string message, object? obj = null)
+        => Information(new LogEvent(DateTimeOffset.Now, LogLevelEnum.Info, message), obj);
+
+    /// <summary>
+    /// Write a information log
+    /// </summary>
+    /// <param name="logEvent">Contains the log event</param>
+    /// <param name="obj">Contains the optional object to serialize into the log</param>
+    public void Information(LogEvent logEvent, object? obj = null)
+        => WriteLogEvent(logEvent, obj);
+
+    #endregion
+    #region Information Log Methods (Asynchronous)
+
+    /// <summary>
+    /// Write a information log
+    /// </summary>
+    /// <param name="message">Contains the log message</param>
+    /// <param name="obj">Contains the optional object to serialize into the log</param>
+    public async Task InformationAsync(string message, object? obj = null)
+        => await InformationAsync(new LogEvent(DateTimeOffset.Now, LogLevelEnum.Normal, message), obj);
+
+    /// <summary>
+    /// Write a information log
+    /// </summary>
+    /// <param name="logEvent">Contains the log event</param>
+    /// <param name="obj">Contains the optional object to serialize into the log</param>
+    public async Task InformationAsync(LogEvent logEvent, object? obj = null)
+        => await WriteLogEventAsync(logEvent, obj);
+
+    #endregion
+
+    #region Warning Log Methods (Synchronous)
+
+    /// <summary>
+    /// Write a warning log
+    /// </summary>
+    /// <param name="message">Contains the log message</param>
+    /// <param name="obj">Contains the optional object to serialize into the log</param>
+    public void Warning(string message, object? obj = null)
+        => Warning(new LogEvent(DateTimeOffset.Now, LogLevelEnum.Warn, message), obj);
+
+    /// <summary>
+    /// Write a information log
+    /// </summary>
+    /// <param name="logEvent">Contains the log event</param>
+    /// <param name="obj">Contains the optional object to serialize into the log</param>
+    public void Warning(LogEvent logEvent, object? obj = null)
+        => WriteLogEvent(logEvent, obj);
+
+    #endregion
+    #region Warning Log Methods (Asynchronous)
+
+    /// <summary>
+    /// Write a warning log
+    /// </summary>
+    /// <param name="message">Contains the log message</param>
+    /// <param name="obj">Contains the optional object to serialize into the log</param>
+    public async Task WarningAsync(string message, object? obj = null)
+        => await WarningAsync(new LogEvent(DateTimeOffset.Now, LogLevelEnum.Normal, message), obj);
+
+    /// <summary>
+    /// Write a warning log
+    /// </summary>
+    /// <param name="logEvent">Contains the log event</param>
+    /// <param name="obj">Contains the optional object to serialize into the log</param>
+    public async Task WarningAsync(LogEvent logEvent, object? obj = null)
+        => await WriteLogEventAsync(logEvent, obj);
+
+    #endregion
+
+    #region Error Log Methods (Synchronous)
+
+    /// <summary>
+    /// Write an error log
+    /// </summary>
+    /// <param name="message">Contains the log message</param>
+    /// <param name="obj">Contains the optional object to serialize into the log</param>
+    public void Error(string message, object? obj = null)
+        => Error(new LogEvent(DateTimeOffset.Now, LogLevelEnum.Err, message), obj);
+
+    /// <summary>
+    /// Write a error log
+    /// </summary>
+    /// <param name="logEvent">Contains the log event</param>
+    /// <param name="obj">Contains the optional object to serialize into the log</param>
+    public void Error(LogEvent logEvent, object? obj = null)
+        => WriteLogEvent(logEvent, obj);
+
+    /// <summary>
+    /// Write an error log from an exception
+    /// </summary>
+    /// <param name="exception">Contains the occured exception</param>
+    public void Error(Exception exception)
+        => Error(exception, new LogEvent(DateTimeOffset.Now, LogLevelEnum.Err, "Exception Occured"));
+
+    /// <summary>
+    /// Write an error log from an exception
+    /// </summary>
+    /// <param name="exception">Contains the occured exception</param>
+    /// <param name="logEvent">Contains the log event</param>
+    public void Error(Exception exception, LogEvent logEvent)
+        => Error(logEvent, exception);
+
+    #endregion
+    #region Error Log Methods (Asynchronous)
+
+    /// <summary>
+    /// Write a error log
+    /// </summary>
+    /// <param name="message">Contains the log message</param>
+    /// <param name="obj">Contains the optional object to serialize into the log</param>
+    public async Task ErrorAsync(string message, object? obj = null)
+        => await ErrorAsync(new LogEvent(DateTimeOffset.Now, LogLevelEnum.Normal, message), obj);
+
+    /// <summary>
+    /// Write a error log
+    /// </summary>
+    /// <param name="logEvent">Contains the log event</param>
+    /// <param name="obj">Contains the optional object to serialize into the log</param>
+    public async Task ErrorAsync(LogEvent logEvent, object? obj = null)
+        => await WriteLogEventAsync(logEvent, obj);
+
+    /// <summary>
+    /// Write an error log from an exception
+    /// </summary>
+    /// <param name="exception">Contains the occured exception</param>
+    public async Task ErrorAsync(Exception exception)
+        => await ErrorAsync(exception, new LogEvent(DateTimeOffset.Now, LogLevelEnum.Err, "Exception Occured"));
+
+    /// <summary>
+    /// Write an error log from an exception
+    /// </summary>
+    /// <param name="exception">Contains the occured exception</param>
+    /// <param name="logEvent">Contains the log event</param>
+    public async Task ErrorAsync(Exception exception, LogEvent logEvent)
+        => await ErrorAsync(logEvent, exception);
+
+    #endregion
+
+    #region Fatal Log Methods (Synchronous)
+
+    /// <summary>
+    /// Write a fatal log
+    /// </summary>
+    /// <param name="message">Contains the log message</param>
+    /// <param name="obj">Contains the optional object to serialize into the log</param>
+    public void Fatal(string message, object? obj = null)
+        => Fatal(new LogEvent(DateTimeOffset.Now, LogLevelEnum.Fatal, message), obj);
+
+    /// <summary>
+    /// Write a fatal log
+    /// </summary>
+    /// <param name="logEvent">Contains the log message</param>
+    /// <param name="obj">Contains the optional object to serialize into the log</param>
+    public void Fatal(LogEvent logEvent, object? obj = null)
+        => WriteLogEvent(logEvent, obj);
+
+    /// <summary>
+    /// Write a fatal log from an exception
+    /// </summary>
+    /// <param name="exception">Contains the occured exception</param>
+    public void Fatal(Exception exception)
+        => Fatal(exception, new LogEvent(DateTimeOffset.Now, LogLevelEnum.Fatal, "Fatal Exception Occured"));
+
+    /// <summary>
+    /// Write an fatal log from an exception
+    /// </summary>
+    /// <param name="exception">Contains the occured exception</param>
+    /// <param name="logEvent">Contains the log event</param>
+    public void Fatal(Exception exception, LogEvent logEvent)
+        => Fatal(logEvent, exception);
+
+    #endregion
+    #region Fatal Log Methods (Asynchronous)
+
+    /// <summary>
+    /// Write a error log
+    /// </summary>
+    /// <param name="message">Contains the log message</param>
+    /// <param name="obj">Contains the optional object to serialize into the log</param>
+    public async Task FatalAsync(string message, object? obj = null)
+        => await FatalAsync(new LogEvent(DateTimeOffset.Now, LogLevelEnum.Normal, message), obj);
+
+    /// <summary>
+    /// Write a error log
+    /// </summary>
+    /// <param name="logEvent">Contains the log event</param>
+    /// <param name="obj">Contains the optional object to serialize into the log</param>
+    public async Task FatalAsync(LogEvent logEvent, object? obj = null)
+        => await WriteLogEventAsync(logEvent, obj);
+
+    /// <summary>
+    /// Write an error log from an exception
+    /// </summary>
+    /// <param name="exception">Contains the occured exception</param>
+    public async Task FatalAsync(Exception exception)
+        => await FatalAsync(exception, new LogEvent(DateTimeOffset.Now, LogLevelEnum.Err, "Exception Occured"));
+
+    /// <summary>
+    /// Write an error log from an exception
+    /// </summary>
+    /// <param name="exception">Contains the occured exception</param>
+    /// <param name="logEvent">Contains the log event</param>
+    public async Task FatalAsync(Exception exception, LogEvent logEvent)
+        => await FatalAsync(logEvent, exception);
+
+    #endregion
 }

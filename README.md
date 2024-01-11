@@ -10,85 +10,112 @@ You can install LothiumLogger directly from NuGet using the NuGet Manager inside
 dotnet add package LothiumLogger
 ```
 
-To start using this library is essential to create a new Logger instance using the dedicated LoggerConfiguration class like this example:
+This library provide a simple configuration steps, the first thing to do is create a new LoggerSettings and configure all the settings that the logging process will use.
+One way is to create a new LoggerSettings class, configure it and pass it to the constructor, the other way is to do it directly inside the constructor with a delegate action.
 
 ```csharp
-var logger = new LoggerConfiguration()
-    .AddConsoleSinker()
-    .Build();
+var logger = new Logger(settings => {
+    // Add settings here
+});
 ```
 
-There library is designed to have multiple type of sinkers, in this version there are two: the ConsoleSinker and the FileSinker, each of them have their unique functionalities.
-For using more of one sinker just add them with the configuration object:
+The library provides a built-in Sink, one for logging to the OS's console and one for logging to one or more file.
+To configure this two sink you need a specific dedicated SinkOptions configuration to provide them, the process to do that is the same of the LoggerSettings class.
+Every sink will use different property from the SinkOptions class so it's not required to populate all of them, this depends on what sink you are currently configuring.
 
 ```csharp
-var logger = new LoggerConfiguration()
-    .AddConsoleSinker()
-    .AddFileSinker()
-    .Build();
+var logger = new Logger(settings => {
+    // Console Sink
+    settings.AddConsoleSink(options => {
+        // Add options here 
+    });
+
+    // Default File Sink For Log Events
+    settings.AddFileSink(options => {
+        // Add options here
+    });
+});
 ```
 
 ### Console Sinker
 
-The console's sink offer the ability to write logs directly to the IDE's debug console to track events while running your projects.
-The 'AddConsoleSink' have this property to be inizialied:
-    - minimumLogLevel: indicate the minimum accepted logging level for the sink.
-    - restrictedToLogLevel: indicate the only accepted loggin level for the sink, this value overwrite the minimum one.
-    - theme: indicate the console's theme that will be used
+The console's sink offer the ability to write logs directly to the IDE's debug console / OS's console to track events while running your projects.
+Like mentioned before, this sink required a set of options passed through a dedicated object to properly working.
+This options class have different type of property, the minimum required are the following:
+
+```csharp
+var logger = new Logger(settings => {
+    settings.AddConsoleSink(options => {
+        options.Enabled = true;                                             // Required => Defines if the sink is enabled for writing the events
+        options.DateFormat = LogDateFormatEnum.Standard;                    // Required => Defines the format for the date inside the log events
+        options.LoggingRule = new(LogLevelEnum.Debug, false);               // Required => Defines the rule for writing the events
+    });
+});
+```
 
 ### File Sinker
 
-The file's sink offer the ability to write logs in one or more files on one or more folders.
-The 'AddFileSink' have this property to be inizialized:
+The file's sink offer the ability to write logs to one or more files/folders, like mentioned before, this sink required a set of options passed through a dedicated object to properly working.
+This options class have different type of property, the minimum required are the following:
+
+The 'AddFileSink()' have this property to be inizialized:
     - name: indicate the name of for the final created file
     - path: indicate the path where the final file will be created
     - minimumLogLevel: indicate the minimum accepted logging level for the sink.
     - restrictedToLogLevel: indicate the only accepted loggin level for the sink, this value overwrite the minimum one.
     - typeOfGeneratedFile: indicate the type of the final created file (for now there is only two types: GenericLog & LothiumLog)
 
+```csharp
+var logger = new Logger(settings => {
+    settings.AddFileSink(options => {
+        options.Enabled = true;                                                             // Required => Defines if the sink is enabled for writing the events
+        options.DateFormat = LogDateFormatEnum.Standard;                                    // Required => Defines the format for the date inside the log events
+        options.LoggingRule = new(LogLevelEnum.Normal, false);                              // Required => Defines the rule for writing the events
+        options.FileRule = new(                                                             // Required => Defines the type, the path and the name of the file
+            LogFileTypeEnum.GenericLog, 
+            Path.Combine("var", "logs"),
+            "LogName"
+        );                                                                                  
+    });
+});
+```
+
 ### Custom Sinker
 
+The library provides the ability to use custom sink in addition to the built-in ones.
+To define a custom sink you need to extends the GenericSink class and override the Write() method
 The configuration object offer the ability to create and add a customized sinker, the only thing to do is create a new class and extender the ISinkers interface:
 
 ```csharp
-using LothiumLogger.Sinkers;
+using LothiumLogger.Interfaces;
 
-class CustomSinker() : ISinkers 
+public class CustomSink : GenericSink
 {
-    // Interface's Property And Methods Implementation
-}
+    public CustomSink(SinkOptions setting) : base(setting) { }
 
-class Main() 
-{
-    var logger = new LoggerConfiguration(new CustomSinker())
-        .AddCustomSinker()
-        .Build();
+    public CustomSink(Action<SinkOptions> settings) : base(settings) { }
+
+    public override void Write(LogEvent logEvent)       // Override required if you want to add custom logic during the writing of the log events
+    {
+        base.Write(logEvent)        // Do this if you need the default writing before your custom logic //
+
+        // Put here your custom logic //
+    }
 }
 ```
 
 ### Logger Methods
 
-After the created a new logger instance, there are 6 different type of logging level: Normal, Debug, Information, Warning, Error & Fatal.
+After the creation of the logger instance, there are 6 different types of logging level: Normal, Debug, Information, Warning, Error & Fatal.
 Each one have their separated methods for writing new logging events:
 
 ```csharp
-// Defualt normal message
-logger.Write("Log Message");
-
-// Debug message when testing code
-logger.Debug("Debug Log Message");
-
-// Info message
-logger.Information("Info Log Message");
-
-// Warning message
-logger.Warning("Warn Log Message");
-
-// Error message
-logger.Error("Err Log Message");
-
-// Fatal message
-logger.Fatal("Fatal Log Message");
+logger.Write("Log Message");                            // Defualt normal message
+logger.Debug("Debug Log Message");                      // Debug message when testing code
+logger.Information("Info Log Message");                 // Info message
+logger.Warning("Warn Log Message");                     // Warning message
+logger.Error("Err Log Message");                        // Error message
+logger.Fatal("Fatal Log Message");                      // Fatal message
 ```
 
 ### Object Serialization

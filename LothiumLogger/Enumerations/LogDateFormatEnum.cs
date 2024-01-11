@@ -1,15 +1,12 @@
-﻿// System Class
-using System;
+﻿// Enumerations Namespace
+namespace LothiumLogger.Enumerations;
 
-namespace LothiumLogger.Enumerations
+/// <summary>
+/// Define the type of date of the Log Message
+/// </summary>
+public enum LogDateFormatEnum
 {
-    /// <summary>
-    /// Define the type of date of the Log Message
-    /// </summary>
-    public enum LogDateFormatEnum
-    {
-        Standard = 0,
-        Minimal = 1,
-        Full = 3,
-    }
+    Standard = 0,
+    Minimal = 1,
+    Full = 3,
 }

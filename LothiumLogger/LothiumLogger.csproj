@@ -33,11 +33,36 @@
 
   <ItemGroup>
     <Compile Remove="Core\**" />
+    <Compile Remove="Sinkers\ExtensionObjects\**" />
+    <Compile Remove="Sinkers\Formatters\**" />
     <Compile Remove="Sinks\**" />
     <EmbeddedResource Remove="Core\**" />
+    <EmbeddedResource Remove="Sinkers\ExtensionObjects\**" />
+    <EmbeddedResource Remove="Sinkers\Formatters\**" />
     <EmbeddedResource Remove="Sinks\**" />
     <None Remove="Core\**" />
+    <None Remove="Sinkers\ExtensionObjects\**" />
+    <None Remove="Sinkers\Formatters\**" />
     <None Remove="Sinks\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Configurations\LoggerConfiguration.cs" />
+    <Compile Remove="Enumerations\LogErrorTypeEnum.cs" />
+    <Compile Remove="Enumerations\SinkTypeEnum.cs" />
+    <Compile Remove="Interfaces\IConsoleSinker.cs" />
+    <Compile Remove="Interfaces\IConsoleSinkerThemes.cs" />
+    <Compile Remove="Interfaces\IFileSinker.cs" />
+    <Compile Remove="Interfaces\ILoggerConfiguration.cs" />
+    <Compile Remove="Interfaces\ISinker.cs" />
+    <Compile Remove="Sinkers\ConsoleSinker.cs" />
+    <Compile Remove="Sinkers\FileSinker.cs" />
+    <Compile Remove="Sinkers\IConsoleSinker.cs" />
+    <Compile Remove="Sinkers\IConsoleSinkerThemes.cs" />
+    <Compile Remove="Sinkers\IFileSinker.cs" />
+    <Compile Remove="Sinkers\ISinker.cs" />
+    <Compile Remove="Sinkers\Themes\LothiumDark.cs" />
+    <Compile Remove="Sinkers\Themes\LothiumLight.cs" />
   </ItemGroup>
 
   <ItemGroup>
