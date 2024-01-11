@@ -328,3 +328,5 @@ LothiumLogger/obj/Debug/net6.0/LothiumLogger.csproj.CopyComplete
 LothiumLogger/.DS_Store
 *.info
 *.info
+.DS_Store
+LothiumLogger/bin/.DS_Store
